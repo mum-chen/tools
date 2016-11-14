@@ -1,0 +1,141 @@
+#!/usr/bin/lua
+-- tool-name=bintools
+
+-- =============================================================================
+-- import
+-- =============================================================================
+_print = require("./debug").p
+
+local unpack = table.unpack or function (_table)
+    assert(type(_table) == 'table', "except table, got " .. type(_table))
+    local function upk(t)
+        if #t <= 0 then
+            return
+        end
+
+        return table.remove(t), upk(t)
+    end
+    return upk(_table)
+end
+
+local function formatbinary(bin, len)
+	local len = tonumber(len) or 8
+	if #bin == len then
+		return bin
+	elseif #bin < len then
+		bin = string.format("%s%s", string.rep("0", len - #bin), bin)
+		return bin
+	end
+	local err
+	if len == 8 then
+		err = "num expect 0~255"	
+	elseif len == 32 then
+		err = "num expect 0~2^32-1"
+	end
+
+	return false, string.format("error binary len %s:%d", bin, #bin) 
+end
+
+local function print_bin(bin, len, sep, callback)
+	local len = tonumber(len) or 4
+	local sep = sep
+	local arr = {}
+	local callback = callback or function(_arr)
+		_print(table.concat(_arr))
+	end
+
+	local last_idx = 1
+	local next_idx = #bin % len
+	local body_num = math.floor(#bin / len)
+
+	if next_idx ~= 0 then
+		table.insert(arr, string.sub(bin, last_idx, next_idx))
+		last_idx = next_idx + 1
+	end
+
+	for i = 1, body_num, 1 do
+		next_idx = next_idx + len
+		table.insert(arr, string.sub(bin, last_idx, next_idx))
+		table.insert(arr, sep)
+		last_idx = next_idx + 1
+	end
+
+	callback(arr)
+
+	return true
+end
+
+local function hex_tobin(hex_str)
+	assert(type(hex_str) == "string", "expect string input nil")
+	local hex = string.upper(hex_str)
+
+	local cmd = string.format('echo "ibase=16;obase=2;%s" | bc', hex)
+	local p = io.popen(cmd):read("*all"):gsub("%c","")
+
+	print_bin(formatbinary(p, #hex_str * 4), 4, " ")
+end
+
+local function hex_tobin_arr(hex_str, pattern)
+	assert(type(hex_str) == "string", "expect string input nil")
+	local hex, bin_len = string.upper(hex_str), #hex_str * 4
+
+	local cmd = string.format('echo "ibase=16;obase=2;%s" | bc', hex)
+	local p = io.popen(cmd):read("*all"):gsub("%c","")
+
+	-- get pattern 
+	local b, e, o -- begin, operator, end
+	if pattern then
+		b, o, e = string.match(pattern,"(%d+)([+:])(%d+)")
+		b, e = tonumber(b), tonumber(e)
+		b = (not b or b < 0) and 0 or b + 1
+
+		if o == "+" then
+			e = e and b + e - 1
+		elseif o == ":" then
+			e = e and b + e
+		end
+	end
+
+	b = b or 1
+	e = (e and e <= bin_len) and e or bin_len
+
+	local callback = function(arr)
+		for i = b, e, 1 do
+			print(string.format("[%d]\t=\t%s", i - 1, arr[i]))
+		end
+	end
+
+	print_bin(formatbinary(p, bin_len), 1, nil, callback)
+end
+
+local function usage()
+	print("bintools usage")
+	print("         bintools -b hex-number ")
+	print("         bintools -bits hex-number [pattern]")
+	print("pattern 0:3 # bit 0 to bit 3")
+	print("        0+3 # bit 0 to bit 2 (total 3 bit)")
+end
+
+-- =============================================================================
+-- entry
+-- =============================================================================
+-- select && unpack
+local function main(...)
+	if not arg[2] then
+		usage()
+		return -1
+	end
+	
+	local cmd = arg[1]
+
+	if cmd == "-b" then
+		hex_tobin(arg[2])
+		return 0
+	elseif cmd == "-bits" then
+		hex_tobin_arr(arg[2], arg[3])
+		return 0
+	end
+
+	usage()
+end
+main(...)
