@@ -1,0 +1,57 @@
+#! /bin/bash
+
+LOCAL_PATH=`pwd`
+
+
+kmake()
+{
+	SOURCE_PATH="/home/mum-chen/wrt/MTK_SDK/RT288x_SDK/source"
+	cd ${SOURCE_PATH}
+	make dep; make V=s && cp images/mum-chen_uImage /var/lib/tftpboot/ && stat /var/lib/tftpboot/mum-chen_uImage
+}
+
+download_test()
+{
+	BIT=${1:-"100k"}
+	FILE=${2:-"hello.tar"}
+
+	while true; do
+		wget http://192.168.1.1/${FILE} --user=admin --password=admin -O /dev/null --limit-rate=${BIT}
+		sleep 1
+	done
+}
+
+
+menuconfig()
+{
+	SOURCE_PATH="/home/mum-chen/wrt/MTK_SDK/RT288x_SDK/source"
+	cd ${SOURCE_PATH}
+	make menuconfig ;
+}
+
+
+usage()
+{
+	echo "$0 usage"
+	echo "   make                 #make uImage"
+	echo "   menu                 #make menuconfig"
+	echo "   down [rate] [file]   #download test"
+}
+
+case $1 in
+make)
+	kmake
+	;;
+down)
+	download_test $2 $3
+	;;
+menu)
+	menuconfig
+	;;
+h2b)
+	hex_tobinary $2
+	;;
+*)
+	usage
+	;;
+esac

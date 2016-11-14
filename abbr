@@ -1,0 +1,48 @@
+#!/bin/bash
+
+SRC_PATH="/home/mum-chen/Test-Env"
+cd ${SRC_PATH}
+FILE_PATH="`pwd`/abbr.note";
+
+edit()
+{
+	vim ${FILE_PATH}
+}
+
+search_head()
+{
+	grep "^$1" ${FILE_PATH} -i | sort
+}
+
+search(){
+	grep "$1" ${FILE_PATH} -i | sort
+}
+
+usage()
+{
+	echo "$0 usage"
+	echo "   -h content #find in head"
+	echo "   -a content #find all"
+	echo "   -e         #edit abbr"
+	echo "   -f         #echo file path"
+}
+
+
+case $1 in
+	-e)
+		edit
+		;;
+	-h)
+		search_head $2
+		;;
+	-a)
+		search $2
+		;;
+	-f)
+		echo ${FILE_PATH}
+		;;
+	*)
+		usage
+		;;
+esac
+

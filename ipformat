@@ -1,0 +1,171 @@
+#!/usr/bin/lua
+-- tool-name=ipfomat 
+
+
+print = require("./debug").p
+
+-- [[ debug
+local function assert(a, b)
+	if not a then
+		local _ = b and print(b)
+		os.exit(1)
+	end
+	return true
+end
+--]]
+local function hex_check(hex_string)
+	local hex = string.upper(hex_string)
+	local fail = string.match(hex_string,"([g-z]+)")
+	return fail and false or hex
+end
+
+local function formatbinary(bin, len)
+	local len = tonumber(len) or 8
+	if #bin == len then
+		return bin
+	elseif #bin < len then
+		bin = string.format("%s%s", string.rep("0", len - #bin), bin)
+		return bin
+	end
+	local err
+	if len == 8 then
+		err = "num expect 0~255"	
+	elseif len == 32 then
+		err = "num expect 0~2^32-1"
+	end
+
+	return false, string.format("error binary len %s:%d", bin, #bin) 
+end
+
+local function print_bin(bin, len, sep)
+	local len = tonumber(len) or 4
+	local sep = sep or " "
+	local arr = {}
+
+	local last_idx = 1
+	local next_idx = #bin % len
+	local body_num = math.floor(#bin / len)
+
+	if next_idx ~= 0 then
+		table.insert(arr, string.sub(bin, last_idx, next_idx))
+		last_idx = next_idx + 1
+	end
+
+	for i = 1, body_num, 1 do
+		print(string.sub(bin, 4, 4))
+		table.insert(arr, string.sub(bin, last_idx, len))
+		table.insert(arr, sep)
+		last_idx = last_idx + len + 1
+	end
+
+	print(arr)
+	print(table.concat(arr))
+	return true
+end
+
+local function tobin(num, len)
+	local num = tonumber(num)
+
+	if not num then 
+		return false, "expect a number in tobin()"
+	end
+	
+	if num < 0 then
+		return false, "num expect positive number"
+	end
+
+	local cmd = string.format('echo "ibase=10;obase=2;%s" | bc', num)
+	local p = io.popen(cmd):read("*all"):gsub("%c","")
+
+	return formatbinary(p, len)
+end
+
+local function todec(bin_str)
+	local bin = tonumber(bin_str)
+	
+	if not bin then 
+		return false, "expect a number in todec()"
+	end
+
+	local cmd = string.format('echo "ibase=2;%s" | bc', bin_str)
+	local p = io.popen(cmd):read("*all"):gsub("%c","")
+	return p
+end
+
+	
+local function usage()
+	print("ipfomat -n   ipaddr")
+	print("ipfomat -s   number(0~2^32-1)")
+	print("ipfomat -h2b number(hex format")
+end
+
+local function to_string(num)
+	local bin, err = tobin(num, 32)	assert(bin, err)
+
+	local pattern = string.format("(%s)", string.rep("%d", 8))
+	local pattern = string.rep(pattern, 4)
+	local a, b, c, d = string.match(bin, pattern)
+
+	local ip = string.format("%s %s %s %s", a, b, c, d)
+	print(ip)
+
+	local a, err = todec(a)	assert(a, err)
+	local b, err = todec(b) assert(b, err)
+	local c, err = todec(c) assert(c, err)
+	local d, err = todec(d) assert(d, err)
+	
+	local ip = string.format("%s.%s.%s.%s", a, b, c, d)
+	print(ip)
+end
+
+local function to_number(ip)
+	assert(type(ip) == "string", "expect string input")
+	local err	
+	local a, b, c, d = string.match(ip,"(%d+).(%d+).(%d+).(%d+)$")
+	local a, err = tobin(a)	assert(a, err)
+	local b, err = tobin(b) assert(b, err)
+	local c, err = tobin(c) assert(c, err)
+	local d, err = tobin(d) assert(d, err)
+
+	local bin_str = string.format("%s %s %s %s", a, b, c, d)
+	print(bin_str)
+	local bin = string.format("%s%s%s%s", a, b, c, d)
+	print(todec(bin))
+end
+
+local function hex_tobin(hex_str)
+	assert(type(hex_str) == "string", "expect string input")
+	local hex = hex_check(hex_str)
+	
+	if not hex then 
+		return false, "expect a number in todec()"
+	end
+
+	local cmd = string.format('echo "ibase=16;obase=2;%s" | bc', hex)
+	local p = io.popen(cmd):read("*all"):gsub("%c","")
+
+	print_bin(formatbinary(p, #hex_str * 4))
+end
+
+local function main(cmd, data) 
+	if not (cmd and data) then
+		usage()
+		return 0
+	end
+	
+	if cmd == "-n" then
+		to_number(data)
+		return
+	elseif cmd == "-s" then
+		to_string(data)
+		return
+	elseif cmd == "-h2b" then
+		hex_tobin(data)
+		return
+	end
+
+	usage()
+end
+
+
+main(...)
