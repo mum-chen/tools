@@ -15,7 +15,14 @@ set tag=tags;/
 " viem setting
 syn on se title
 set background=dark
+
+set list
+" set nolist
 set list listchars=tab:»\ ,trail:.,extends:»,precedes:«
+" set listchars=tab:\⋮\ ,trail:·,eol:↲,extends:»,precedes:«,nbsp:%
+
+" set marker
+set fdm=marker
 
 " else
 " filetype plugin indent on
