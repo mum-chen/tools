@@ -1,6 +1,7 @@
 #! /bin/bash
 
 LOCAL_PATH=`pwd`
+DEV_TOOLS_PATH='/home/mum-chen/Test-Env'
 
 
 kmake()
@@ -29,13 +30,28 @@ menuconfig()
 	make menuconfig ;
 }
 
+bintool()
+{
+	
+	# don't have pattern
+	if [ -z "$2" ]; then
+		oper="-b"
+	else
+		oper="-bits"
+	fi
+	
+	cd ${DEV_TOOLS_PATH}
+	./bintools ${oper} $1 $2
+}
+
 
 usage()
 {
 	echo "$0 usage"
-	echo "   make                 #make uImage"
-	echo "   menu                 #make menuconfig"
-	echo "   down [rate] [file]   #download test"
+	echo "   make                     # make uImage"
+	echo "   menu                     # make menuconfig"
+	echo "   down [rate] [file]       # download test"
+	echo "   bits hex-num [pattern]   # bintools"
 }
 
 case $1 in
@@ -48,8 +64,8 @@ down)
 menu)
 	menuconfig
 	;;
-h2b)
-	hex_tobinary $2
+bits)
+	bintool $2 $3
 	;;
 *)
 	usage

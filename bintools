@@ -13,8 +13,7 @@ local unpack = table.unpack or function (_table)
             return
         end
 
-        return table.remove(t), upk(t)
-    end
+        return table.remove(t), upk(t) end
     return upk(_table)
 end
 
@@ -92,7 +91,7 @@ local function hex_tobin_arr(hex_str, pattern)
 		if o == "+" then
 			e = e and b + e - 1
 		elseif o == ":" then
-			e = e and b + e
+			e = e and e + 1
 		end
 	end
 
