@@ -30,6 +30,15 @@ menuconfig()
 	make menuconfig ;
 }
 
+bindir()
+{
+	P="/var/lib/tftpboot/"
+	echo "dir:"
+	echo "$P"
+	cd $P
+}
+
+
 bintool()
 {
 	
@@ -50,6 +59,7 @@ usage()
 	echo "$0 usage"
 	echo "   make                     # make uImage"
 	echo "   menu                     # make menuconfig"
+	echo "   bindir                   # go to image dir"
 	echo "   down [rate] [file]       # download test"
 	echo "   bits hex-num [pattern]   # bintools"
 }
@@ -66,6 +76,9 @@ menu)
 	;;
 bits)
 	bintool $2 $3
+	;;
+bindir)
+	bindir
 	;;
 *)
 	usage
