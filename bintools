@@ -7,14 +7,30 @@
 _print = require("./debug").p
 
 local unpack = table.unpack or function (_table)
-    assert(type(_table) == 'table', "except table, got " .. type(_table))
-    local function upk(t)
-        if #t <= 0 then
-            return
-        end
+	assert(type(_table) == 'table', "except table, got " .. type(_table))
+	local function upk(t)
+		if #t <= 0 then
+		    return
+		end
 
-        return table.remove(t), upk(t) end
-    return upk(_table)
+		return table.remove(t), upk(t) 
+	end
+	return upk(_table)
+end
+
+local function reverse(_table)
+	if type(_table) ~= "table" then
+		return nil, "error: expect got table"
+	end
+
+	local b, e = 1, #_table
+	while(b < e) do
+		_table[b], _table[e] = _table[e], _table[b]
+		b = b + 1
+		e = e - 1
+	end
+
+	return _table
 end
 
 local function formatbinary(bin, len)
@@ -85,13 +101,27 @@ local function hex_tobin_arr(hex_str, pattern)
 	local b, e, o -- begin, operator, end
 	if pattern then
 		b, o, e = string.match(pattern,"(%d+)([+:])(%d+)")
-		b, e = tonumber(b), tonumber(e)
-		b = (not b or b < 0) and 0 or b + 1
+		b = o and b or string.match(pattern,"(%d+)")
+		b = tonumber(b)
+
+		if not o then
+			-- set default pattern
+			o = "+"
+			e = 1
+		else
+			e = tonumber(e)
+		end
+
+		-- the minimum begin index is 1
+		b = (not b or b < 0) and 1 or b + 1
 
 		if o == "+" then
 			e = e and b + e - 1
 		elseif o == ":" then
 			e = e and e + 1
+			if b > e then
+				b, e = e, b
+			end
 		end
 	end
 
@@ -99,7 +129,15 @@ local function hex_tobin_arr(hex_str, pattern)
 	e = (e and e <= bin_len) and e or bin_len
 
 	local callback = function(arr)
-		for i = b, e, 1 do
+		-- length check
+		if b > #arr then
+			local err = string.format("the max-length is %d", #arr - 1)
+			print(err)
+			return nil, err
+		end
+
+		reverse(arr)
+		for i = e, b, -1 do
 			print(string.format("[%d]\t=\t%s", i - 1, arr[i]))
 		end
 	end
@@ -126,12 +164,13 @@ local function main(...)
 	end
 	
 	local cmd = arg[1]
+	local hex = string.match(arg[2],"0x(.*)") or arg[2]
 
 	if cmd == "-b" then
-		hex_tobin(arg[2])
+		hex_tobin(hex)
 		return 0
 	elseif cmd == "-bits" then
-		hex_tobin_arr(arg[2], arg[3])
+		hex_tobin_arr(hex, arg[3])
 		return 0
 	end
 
