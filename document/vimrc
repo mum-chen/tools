@@ -12,7 +12,7 @@ set number
 set showcmd
 set tag=tags;/
 
-" viem setting
+" vim setting
 syn on se title
 set background=dark
 
