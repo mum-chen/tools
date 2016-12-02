@@ -1,22 +1,31 @@
-PMA	PHYSICAL MEDIUM ATTACHMENT
-PMD	PHJYSICAL MEDIUM DEPENDENT
-PLS	PHYSICAL LAYER SIGNALING
-PCS	PHYSICAL CODING SUBLAYER
-MDIO	数据线
-MDC	时钟线
-MAU	MEDIUM ATTACHMENT UNIT
-MDI	MEDIUM DEPENDENT INTERFACE
-MII	MEDIUM INDEPENDENT INTERFACE
-STA	STARING MANAGEMENT
-RS	RECONCILIATION SUBLAYER
-MIB	MANAGEMENT INFORMATION BASE
-SNMP	
+PMA	Physical Medium Attachment
+PMD	Phjysical Medium Dependent
+PLS	Physical Layer Signaling
+PCS	Physical Coding Sublayer
+MDIO	mii 数据线
+MDC	mii 时钟线
+MAU	Medium Attachment Unit
+mAC	Medium Access Control
+MDI	Medium DEPENDENT Interface
+mII	Medium Independent iNTERFACE
+STA	Staring Management
+RS	Reconciliation Sublayer
+mIB	Management Information Base
+sNMP	
 SDM	
-FC	FLOW CONTROL
-FOE	FRAME OFFLOAD ENGINE
-PPE	PACKET PROCESS ENGINE
-FE	FRAME ENGINE
-SP	GSW SOURCE PORT    #rx_desc.info3.sp
-CRSN	CPU REASON         #rx_desc.info3.crsn
+NIC	Network Interface Card
+FC	Flow Control
+FOE	Frame Offload Engine
+PPE	Packet Process Engine
+FE	Frame Engine
+SP	GSW Source Port    #rx_desc.info3.sp
+CRSN	CPU reason         #rx_desc.info3.crsn
 CBS	Committed Burst Size  #in GSW programing guide
 PBS	Peak Burst Size       #in GSW programing guide
+LPI	Low Power Idle        #in GSW programing guide
+CPC	CPU Port Control      #in GSW programing guide
+PSC	Port Security Control #in GSW programing guide
+SA	Source Address        #in GSW programing guide
+CVID	Custom Vlan ID        #in GSW programing guide
+FID	Filtering ID          #in GSW programing guide
+SFD	Start Frame Delimiter

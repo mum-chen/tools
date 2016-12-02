@@ -20,9 +20,11 @@ search(){
 
 usage()
 {
-	echo "$0 usage"
-	echo "   -h content #find in head"
-	echo "   -a content #find all"
+	echo "abbr($0) usage"
+	echo "   abbr <keyword>"
+	echo "   -h help"
+	echo "   -a <keyword> content #find all, default param"
+	echo "   -s <keyword> content #find with start"
 	echo "   -e         #edit abbr"
 	echo "   -f         #echo file path"
 }
@@ -33,7 +35,7 @@ case $1 in
 		edit
 		;;
 	-h)
-		search_head $2
+		usage
 		;;
 	-a)
 		search $2
@@ -41,8 +43,11 @@ case $1 in
 	-f)
 		echo ${FILE_PATH}
 		;;
+	-s)
+		search_head $2
+		;;
 	*)
-		usage
+		search $1
 		;;
 esac
 

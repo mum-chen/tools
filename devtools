@@ -4,6 +4,13 @@ LOCAL_PATH=`pwd`
 DEV_TOOLS_PATH='/home/mum-chen/Test-Env'
 
 
+kclean()
+{
+	SOURCE_PATH="/home/mum-chen/wrt/MTK_SDK/RT288x_SDK/source"
+	cd ${SOURCE_PATH}
+	make clean;
+}
+
 kmake()
 {
 	SOURCE_PATH="/home/mum-chen/wrt/MTK_SDK/RT288x_SDK/source"
@@ -65,6 +72,9 @@ usage()
 }
 
 case $1 in
+clean)
+	# kclean
+	;;
 make)
 	kmake
 	;;
