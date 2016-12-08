@@ -11,7 +11,7 @@ mII	Medium Independent iNTERFACE
 STA	Staring Management
 RS	Reconciliation Sublayer
 mIB	Management Information Base
-sNMP	
+SNMP	
 SDM	
 NIC	Network Interface Card
 FC	Flow Control
@@ -29,3 +29,5 @@ SA	Source Address        #in GSW programing guide
 CVID	Custom Vlan ID        #in GSW programing guide
 FID	Filtering ID          #in GSW programing guide
 SFD	Start Frame Delimiter
+IPC	Interprocess Communication     # in LKD
+MMU	Memory Management Unit         # in LKD
