@@ -42,7 +42,7 @@ bindir()
 	P="/var/lib/tftpboot/"
 	echo "dir:"
 	echo "$P"
-	cd $P
+	sh -c "cd $P"
 }
 
 
@@ -61,6 +61,12 @@ bintool()
 }
 
 
+gitproxy()
+{
+	./gitproxy $1
+	
+}
+
 usage()
 {
 	echo "$0 usage"
@@ -69,7 +75,10 @@ usage()
 	echo "   bindir                   # go to image dir"
 	echo "   down [rate] [file]       # download test"
 	echo "   bits hex-num [pattern]   # bintools"
+	echo "   gitproxy <on|off|status>"
 }
+
+
 
 case $1 in
 clean)
@@ -90,6 +99,10 @@ bits)
 bindir)
 	bindir
 	;;
+gitproxy)
+	gitproxy $2
+	;;
+
 *)
 	usage
 	;;
