@@ -1,0 +1,68 @@
+# self, default
+13,15d12
+< -- Set Self Config
+< local self_cfg = {}
+< 
+43c40
+< beautiful.init("/usr/share/awesome/themes/sky/theme.lua")
+---
+> beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+50,56d46
+< 
+< -- set local cfg
+< self_cfg.sock5   = "ss-qt5"
+< self_cfg.note    = "WizNote"
+< self_cfg.browser = "google-chrome"
+< self_cfg.music   = "netease-cloud-music"
+< 
+87c77
+<     tags[s] = awful.tag({ "工作区1", "工作区2", "工作区3", "浏览器区4","浏览器5","笔记区6", "娱乐区7", "软件堆放8","临时区域9"}, s, layouts[1])
+---
+>     tags[s] = awful.tag({ "工作区1", "工作区2", "工作区3", "浏览器区4","浏览器区5","笔记区6", "娱乐区7", "保留区域8","临时区域9"}, s, layouts[1])
+102,120c92,96
+< 
+< 
+< 
+< self_cfg.app_menu= {
+<    { "browser", self_cfg.browser },
+<    { "note",  self_cfg.note },
+<    { "music", self_cfg.music },
+<    { "proxy", self_cfg.sock5 },
+< }
+< 
+< mymainmenu_item = {
+<    { "app", self_cfg.app_menu, beautiful.awesome_icon },
+<    { "Debian", debian.menu.Debian_menu.Debian },
+<    { "open terminal", terminal },
+<    { "awesome", myawesomemenu, beautiful.awesome_icon },
+< }
+< 
+< 
+< mymainmenu = awful.menu({ items = mymainmenu_item })
+---
+> mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+>                                     { "Debian", debian.menu.Debian_menu.Debian },
+>                                     { "open terminal", terminal }
+>                                   }
+>                         })
+230,247d205
+<     awful.key({ modkey,           }, ",",      awful.tag.viewprev       ),
+<     awful.key({ modkey,           }, ".",      awful.tag.viewnext       ),
+< 
+<     awful.key({ modkey,           }, "q",
+<                 function ()
+<                     awful.util.spawn("amixer set Master 5%+")
+<                 end),
+< 
+<     awful.key({ modkey,           }, "e",
+<                 function ()
+<                     awful.util.spawn("amixer set Master 5%-")
+<                 end),
+< 
+<     awful.key({ modkey,           }, "g",
+<                 function ()
+<                     mouse.coords({ x=0, y=0})
+<                 end),
+< 
+305d262
+<     awful.key({ modkey, "Shift"   }, "z",      function (c) c:kill()                         end),
